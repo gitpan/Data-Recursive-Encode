@@ -3,24 +3,40 @@ abstract: 'Encode/Decode Values In A Structure'
 author:
   - 'Tokuhiro Matsuno <tokuhirom AAJKLFJEF GMAIL COM>'
 build_requires:
-  ExtUtils::MakeMaker: 6.42
-  Test::More: 0.94
+  ExtUtils::MakeMaker: '6.59'
+  JSON: '0'
+  Test::More: '0.94'
 configure_requires:
-  ExtUtils::MakeMaker: 6.42
-distribution_type: module
-generated_by: 'Module::Install version 1.00'
+  Module::Build: '0.38'
+dynamic_config: 0
+generated_by: 'Minilla/v2.1.2, CPAN::Meta::Converter version 2.141520'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
-  version: 1.4
-name: Data-Recursive-Encode
+  version: '1.4'
+name: data-recursive-encode
 no_index:
   directory:
-    - inc
     - t
     - xt
+    - inc
+    - share
+    - eg
+    - examples
+    - author
+    - builder
+provides:
+  Data::Recursive::Encode:
+    file: lib/Data/Recursive/Encode.pm
+    version: '0.05'
 requires:
-  perl: 5.8.1
+  perl: '5.008001'
 resources:
-  license: http://dev.perl.org/licenses/
-version: 0.04
+  bugtracker: https://git@github.com/tokuhirom/p5-data-recursive-encode/issues
+  homepage: https://git@github.com/tokuhirom/p5-data-recursive-encode
+  repository: git://git@github.com/tokuhirom/p5-data-recursive-encode.git
+version: '0.05'
+x_contributors:
+  - 'gfx <gfuji@cpan.org>'
+  - 'Hiroki Honda <cside.story@gmail.com>'
+  - 'Tokuhiro Matsuno <tokuhirom@gmail.com>'

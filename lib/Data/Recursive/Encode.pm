@@ -3,11 +3,14 @@ use 5.008001;
 use strict;
 use warnings FATAL => 'all';
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use Encode ();
 use Carp ();
 use Scalar::Util qw(blessed refaddr);
+use B;
+
+our $DO_NOT_PROCESS_NUMERIC_VALUE = 0;
 
 sub _apply {
     my $code = shift;
@@ -41,7 +44,7 @@ sub _apply {
             push @retval, $proto;
         }
         else{
-            push @retval, defined($arg) ? $code->($arg) : $arg;
+            push @retval, defined($arg) && (! $DO_NOT_PROCESS_NUMERIC_VALUE || ! _is_number($arg)) ? $code->($arg) : $arg;
         }
     }
 
@@ -71,7 +74,7 @@ sub decode_utf8 {
 
 sub encode_utf8 {
     my ($class, $stuff) = @_;
-    _apply(sub { Encode::encode_utf8($_[0]) }, {}, $stuff);
+    _apply(\&Encode::encode_utf8, {}, $stuff);
 }
 
 sub from_to {
@@ -83,6 +86,15 @@ sub from_to {
         || Carp::croak("$class: unknown encoding '$to_enc'");
     _apply(sub { Encode::from_to($_[0], $from_enc, $to_enc, $check) }, {}, $stuff);
     return $stuff;
+}
+
+sub _is_number {
+    my $value = shift;
+    return 0 unless defined $value;
+
+    my $b_obj = B::svref_2object(\$value);
+    my $flags = $b_obj->FLAGS;
+    return $flags & ( B::SVp_IOK | B::SVp_NOK ) && !( $flags & B::SVp_POK ) ? 1 : 0;
 }
 
 1;
@@ -110,6 +122,26 @@ Data::Recursive::Encode visits each node of a structure, and returns a new
 structure with each node's encoding (or similar action). If you ever wished
 to do a bulk encode/decode of the contents of a structure, then this
 module may help you.
+
+=head1 VALIABLES
+
+=over 4
+
+=item $Data::Recursive::Encode::DO_NOT_PROCESS_NUMERIC_VALUE
+
+do not process numeric value.
+
+    use JSON;
+    use Data::Recursive::Encode;
+
+    my $data = { int => 1 };
+
+    is encode_json( Data::Recursive::Encode->encode_utf8($data) ); #=> '{"int":"1"}'
+
+    local $Data::Recursive::Encode::DO_NOT_PROCESS_NUMERIC_VALUE = 1;
+    is encode_json( Data::Recursive::Encode->encode_utf8($data) ); #=> '{"int":1}'
+
+=back
 
 =head1 METHODS
 
