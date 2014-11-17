@@ -8,6 +8,7 @@ benchmarks/visitor_and_rmap.pl
 benchmarks/visitor_and_rmap_to_sjis.pl
 cpanfile
 lib/Data/Recursive/Encode.pm
+minil.toml
 t/00_compile.t
 t/01_simple.t
 t/02_more.t
